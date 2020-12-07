@@ -62,7 +62,7 @@ public class CategoryFragment extends Fragment {
     }
 
     private GridView carView;
-    private List<CategoryModel> catList= new ArrayList<>();
+    public static List<CategoryModel> catList= new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

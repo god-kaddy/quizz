@@ -1,5 +1,6 @@
 package com.example.quizz;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +33,7 @@ public class CategoryAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View view, ViewGroup viewGroup) {
+    public View getView(final int position, View view, ViewGroup viewGroup) {
 
         View myView;
 
@@ -44,12 +45,20 @@ public class CategoryAdapter extends BaseAdapter {
         {
             myView= view;
         }
+        myView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(view.getContext(),TestActivity.class);
+                intent.putExtra("CAT_INDEX",position);
+                view.getContext().startActivity(intent);
+            }
+        });
 
         TextView catName=myView.findViewById(R.id.catName);
         TextView noOfTests= myView.findViewById(R.id.no_of_tests);
 
         catName.setText(cat_list.get(position).getName());
-        noOfTests.setText(String.valueOf(cat_list.get(position).getNoOfTests()));
+        noOfTests.setText(String.valueOf(cat_list.get(position).getNoOfTests()) + "Test");
 
         return myView;
     }
