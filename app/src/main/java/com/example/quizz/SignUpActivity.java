@@ -1,10 +1,12 @@
 package com.example.quizz;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -112,14 +114,30 @@ public class SignUpActivity extends AppCompatActivity {
 
         mAuth.createUserWithEmailAndPassword(emailStr, passStr)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Toast.makeText(SignUpActivity.this, "Sign up Successful",Toast.LENGTH_SHORT).show();
-                            progressDailog.dismiss();
-                            Intent intent=new Intent(SignUpActivity.this,MainActivity.class);
-                            startActivity(intent);
-                            SignUpActivity.this.finish();
+
+                            DbQuery.createUserData(emailStr,nameStr, new MyCompleteListener() {
+                                @Override
+                                public void onSuccess() {
+                                    progressDailog.dismiss();
+                                    Intent intent=new Intent(SignUpActivity.this,MainActivity.class);
+                                    startActivity(intent);
+                                    SignUpActivity.this.finish();
+                                }
+
+                                @Override
+                                public void onFailure() {
+
+                                    Toast.makeText(SignUpActivity.this,"Something went wrong...! Plz try again",Toast.LENGTH_SHORT).show();
+
+                                }
+                            });
+
+
                         } else {
                             // If sign in fails, display a message to the user.
                             progressDailog.dismiss();

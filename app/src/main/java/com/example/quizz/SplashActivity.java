@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -21,6 +22,9 @@ public class SplashActivity extends AppCompatActivity {
         appName=findViewById(R.id.app_name);
 
         mAuth=FirebaseAuth.getInstance();
+
+        // Access a Cloud Firestore instance from your Activity
+        DbQuery.g_firestore = FirebaseFirestore.getInstance();
 
         new Thread()
         {
