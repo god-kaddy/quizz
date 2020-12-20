@@ -62,7 +62,6 @@ public class CategoryFragment extends Fragment {
     }
 
     private GridView carView;
-    public static List<CategoryModel> catList= new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,26 +71,14 @@ public class CategoryFragment extends Fragment {
 
         carView=view.findViewById(R.id.cat_Grid);
 
-        loadCategories();
+        //loadCategories();
 
-        CategoryAdapter adapter=new CategoryAdapter(catList);
+        CategoryAdapter adapter=new CategoryAdapter(DbQuery.g_catList);
         carView.setAdapter(adapter);
 
 
         return view;
     }
 
-    private void loadCategories()
-    {
-        catList.clear();
-        catList.add(new CategoryModel("1","C",10));
-        catList.add(new CategoryModel("2","C++",20));
-        catList.add(new CategoryModel("3","DS",15));
-        catList.add(new CategoryModel("4","PHP",10));
-        catList.add(new CategoryModel("5","JAVA",30));
-        catList.add(new CategoryModel("6","DOT.NET",40));
-        catList.add(new CategoryModel("6","DOT.NET",40));
-        catList.add(new CategoryModel("6","DOT.NET",40));
-        catList.add(new CategoryModel("6","DOT.NET",40));
-    }
+
 }

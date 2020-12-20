@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -39,9 +40,26 @@ public class SplashActivity extends AppCompatActivity {
 
                 if(mAuth.getCurrentUser() != null)
                 {
-                    Intent intent=new Intent(SplashActivity.this,LoginActivity.class);
-                    startActivity(intent);
-                    SplashActivity.this.finish();
+
+                    DbQuery.loadCategories(new MyCompleteListener() {
+                        @Override
+                        public void onSuccess() {
+
+                            Intent intent=new Intent(SplashActivity.this,LoginActivity.class);
+                            startActivity(intent);
+                            SplashActivity.this.finish();
+
+                        }
+
+                        @Override
+                        public void onFailure() {
+
+                            Toast.makeText(SplashActivity.this, "Something went wrong ! Plz try again",
+                                    Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
+
                 }
                 else
                 {

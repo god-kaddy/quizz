@@ -3,6 +3,7 @@ package com.example.quizz;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -129,9 +130,26 @@ public class LoginActivity extends AppCompatActivity {
 
                             // Sign in success, update UI with the signed-in user's information
                             Toast.makeText(LoginActivity.this,"Login Success",Toast.LENGTH_SHORT).show();
-                            progressDailog.dismiss();
-                            Intent intent=new Intent(LoginActivity.this,MainActivity.class);
-                            startActivity(intent);
+
+                            DbQuery.loadCategories(new MyCompleteListener() {
+                                @Override
+                                public void onSuccess() {
+
+                                    progressDailog.dismiss();
+                                    Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+                                    startActivity(intent);
+                                }
+
+                                @Override
+                                public void onFailure() {
+
+                                    progressDailog.dismiss();
+                                    Toast.makeText(LoginActivity.this, "Something went wrong ! Plz try again",
+                                            Toast.LENGTH_SHORT).show();
+
+                                }
+                            });
+
                         } else {
                             // If sign in fails, display a message to the user.
                             progressDailog.dismiss();
@@ -180,17 +198,78 @@ public class LoginActivity extends AppCompatActivity {
             AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
             mAuth.signInWithCredential(credential)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @SuppressLint("NewApi")
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 // Sign in success, update UI with the signed-in user's information
 
                                 Toast.makeText(LoginActivity.this,"Google Sign In Success",Toast.LENGTH_SHORT).show();
+
                                 FirebaseUser user = mAuth.getCurrentUser();
-                                progressDailog.dismiss();
-                                Intent intent=new Intent(LoginActivity.this,MainActivity.class);
-                                startActivity(intent);
-                                LoginActivity.this.finish();
+
+                                if(task.getResult().getAdditionalUserInfo().isNewUser())
+                                {
+                                    DbQuery.createUserData(user.getEmail(), user.getDisplayName(), new MyCompleteListener() {
+                                        @Override
+                                        public void onSuccess() {
+
+                                            DbQuery.loadCategories(new MyCompleteListener() {
+                                                @Override
+                                                public void onSuccess() {
+
+                                                    progressDailog.dismiss();
+                                                    Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+                                                    startActivity(intent);
+                                                    LoginActivity.this.finish();
+
+                                                }
+
+                                                @Override
+                                                public void onFailure() {
+
+                                                    progressDailog.dismiss();
+                                                    Toast.makeText(LoginActivity.this, "Something went wrong ! Plz try again",
+                                                            Toast.LENGTH_SHORT).show();
+
+                                                }
+                                            });
+
+
+                                        }
+
+                                        @Override
+                                        public void onFailure() {
+
+                                            progressDailog.dismiss();
+                                            Toast.makeText(LoginActivity.this, "Something went wrong ! Plz try again",
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                                else
+                                {
+                                    DbQuery.loadCategories(new MyCompleteListener() {
+                                        @Override
+                                        public void onSuccess() {
+
+                                            progressDailog.dismiss();
+                                            Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+                                            startActivity(intent);
+
+                                        }
+
+                                        @Override
+                                        public void onFailure() {
+
+                                            progressDailog.dismiss();
+                                            Toast.makeText(LoginActivity.this, "Something went wrong ! Plz try again",
+                                                    Toast.LENGTH_SHORT).show();
+
+                                        }
+                                    });
+                                }
+
 
                             } else {
                                 // If sign in fails, display a message to the user.
