@@ -6,8 +6,12 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +20,9 @@ public class TestActivity extends AppCompatActivity {
 
     private RecyclerView quizView;
     private Toolbar toolbar;
-    private List<TestModel> testList;
+    private TestAdapter adapter;
+    private Dialog progressDailog;
+    private TextView dialogText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,14 +35,24 @@ public class TestActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("");
         quizView=findViewById(R.id.quiz_recycler_view);
 
+        progressDailog=new Dialog(TestActivity.this);
+        progressDailog.setContentView(R.layout.dailog_layout);
+        progressDailog.setCancelable(false);
+        progressDailog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        dialogText=progressDailog.findViewById(R.id.dailog_text);
+        dialogText.setText("Loading ...");
+
+        progressDailog.show();
+
+
         toolbar=findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
 
-        int cat_index=getIntent().getIntExtra("CAT_INDEX",0);
 
-        getSupportActionBar().setTitle(DbQuery.g_catList .get(cat_index).getName());
+        getSupportActionBar().setTitle(DbQuery.g_catList .get(DbQuery.g_selected_cat_index).getName());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         quizView=findViewById(R.id.quiz_recycler_view);
@@ -45,21 +61,32 @@ public class TestActivity extends AppCompatActivity {
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         quizView.setLayoutManager(layoutManager);
 
-        loadTestData();
+       // loadTestData();
+        DbQuery.loadTestData(new MyCompleteListener() {
+            @Override
+            public void onSuccess() {
 
-        TestAdapter adapter=new TestAdapter(testList);
-        quizView.setAdapter(adapter);
+                TestAdapter adapter=new TestAdapter(DbQuery.g_testList);
+                quizView.setAdapter(adapter);
+                progressDailog.dismiss();
+
+            }
+
+            @Override
+            public void onFailure() {
+
+                progressDailog.dismiss();
+                Toast.makeText(TestActivity.this, "Something went wrong ! Plz try again",
+                        Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+
 
     }
 
-    private  void loadTestData()
-    {
-        testList=new ArrayList<>();
-        testList.add(new TestModel("1",50,10));
-        testList.add(new TestModel("2",80,20));
-        testList.add(new TestModel("3",0,25));
-        testList.add(new TestModel("4",20,30));
-    }
+
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
