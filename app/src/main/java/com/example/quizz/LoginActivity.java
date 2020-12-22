@@ -131,7 +131,7 @@ public class LoginActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Toast.makeText(LoginActivity.this,"Login Success",Toast.LENGTH_SHORT).show();
 
-                            DbQuery.loadCategories(new MyCompleteListener() {
+                            DbQuery.loadData(new MyCompleteListener() {
                                 @Override
                                 public void onSuccess() {
 
@@ -214,7 +214,7 @@ public class LoginActivity extends AppCompatActivity {
                                         @Override
                                         public void onSuccess() {
 
-                                            DbQuery.loadCategories(new MyCompleteListener() {
+                                            DbQuery.loadData(new MyCompleteListener() {
                                                 @Override
                                                 public void onSuccess() {
 
@@ -249,7 +249,7 @@ public class LoginActivity extends AppCompatActivity {
                                 }
                                 else
                                 {
-                                    DbQuery.loadCategories(new MyCompleteListener() {
+                                    DbQuery.loadData(new MyCompleteListener() {
                                         @Override
                                         public void onSuccess() {
 
